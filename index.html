@@ -446,702 +446,579 @@ h1{font-size:1.25rem;font-weight:700;color:#a0c4ff;letter-spacing:0.04em;}
 </div>
 
 <script>
-// ======================================================
-// カメラ
-// ======================================================
 let stream=null,camEnabled=false,facePresent=false,awayCount=0;
 let faceDetector=null,fdInterval=null;
-const motCv=document.createElement('canvas');
+const motCv=document.createElement('\u0063\u0061\u006e\u0076\u0061\u0073');
 motCv.width=80;motCv.height=60;
 const mctx=motCv.getContext('2d');
 let prevFrame=null;
-
 async function requestCamera(){
-  const err=document.getElementById('cam-err');
-  if(!navigator.mediaDevices?.getUserMedia){
-    err.textContent='⚠️ このブラウザはカメラ非対応です（Chrome推奨）';
-    err.style.display='block';return;
-  }
-  try{
-    stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:320,height:240}});
-    camEnabled=true;
-    document.getElementById('cam-prompt').style.display='none';
-    ['pip-v','break-v','far-v'].forEach(id=>{
-      const v=document.getElementById(id);if(v)v.srcObject=stream;
-    });
-    document.getElementById('cam-pip').style.display='block';
-    document.getElementById('cam-no-cam').style.display='none';
-    if('FaceDetector' in window){
-      faceDetector=new FaceDetector({fastMode:true,maxDetectedFaces:1});
-      fdInterval=setInterval(async()=>{
-        const v=document.getElementById('pip-v');
-        if(!v.readyState)return;
-        try{const f=await faceDetector.detect(v);updateFace(f.length>0);}catch(e){}
-      },800);
-    } else {
-      fdInterval=setInterval(()=>{
-        const v=document.getElementById('pip-v');if(!v.readyState)return;
-        mctx.drawImage(v,0,0,80,60);
-        const f=mctx.getImageData(0,0,80,60);
-        if(prevFrame){
-          const c=mctx.getImageData(22,12,36,36);
-          let b=0;for(let i=0;i<c.data.length;i+=4)b+=c.data[i];
-          updateFace(b/(36*36)>55);
-        }
-        prevFrame=f;
-      },1000);
-    }
-    showToast('📷 カメラON！');
-  }catch(e){
-    let m='⚠️ カメラを開けませんでした。';
-    if(e.name==='NotAllowedError')m='⚠️ 拒否されました。ブラウザの🔒→許可してください。';
-    else if(e.name==='NotFoundError')m='⚠️ カメラが見つかりません。';
-    else if(e.name==='NotReadableError')m='⚠️ カメラが別アプリで使用中です。';
-    else if(location.protocol==='file:')m='⚠️ ローカルファイルではカメラが制限されます。localhost経由で開いてください。';
-    err.textContent=m;err.style.display='block';
-  }
+ const err=document.getElementById('\u0063\u0061\u006d\u002d\u0065\u0072\u0072');
+ if(!navigator.mediaDevices?.getUserMedia){
+ err.textContent='\u26a0\ufe0f\u0020\u3053\u306e\u30d6\u30e9\u30a6\u30b6\u306f\u30ab\u30e1\u30e9\u975e\u5bfe\u5fdc\u3067\u3059\uff08\u0043\u0068\u0072\u006f\u006d\u0065\u63a8\u5968\uff09';
+ err.style.display='\u0062\u006c\u006f\u0063\u006b';return;
+}
+ try{
+ stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'\u0075\u0073\u0065\u0072',width:320,height:240}});
+ camEnabled=true;
+ document.getElementById('\u0063\u0061\u006d\u002d\u0070\u0072\u006f\u006d\u0070\u0074').style.display='\u006e\u006f\u006e\u0065';
+['\u0070\u0069\u0070\u002d\u0076','\u0062\u0072\u0065\u0061\u006b\u002d\u0076','\u0066\u0061\u0072\u002d\u0076'].forEach(id=>{
+ const v=document.getElementById(id);if(v)v.srcObject=stream;
+});
+ document.getElementById('\u0063\u0061\u006d\u002d\u0070\u0069\u0070').style.display='\u0062\u006c\u006f\u0063\u006b';
+ document.getElementById('\u0063\u0061\u006d\u002d\u006e\u006f\u002d\u0063\u0061\u006d').style.display='\u006e\u006f\u006e\u0065';
+ if('\u0046\u0061\u0063\u0065\u0044\u0065\u0074\u0065\u0063\u0074\u006f\u0072' in window){
+ faceDetector=new FaceDetector({fastMode:true,maxDetectedFaces:1});
+ fdInterval=setInterval(async()=>{
+ const v=document.getElementById('\u0070\u0069\u0070\u002d\u0076');
+ if(!v.readyState)return;
+ try{const f=await faceDetector.detect(v);updateFace(f.length>0);}catch(e){}
+},800);
+}else{
+ fdInterval=setInterval(()=>{
+ const v=document.getElementById('\u0070\u0069\u0070\u002d\u0076');if(!v.readyState)return;
+ mctx.drawImage(v,0,0,80,60);
+ const f=mctx.getImageData(0,0,80,60);
+ if(prevFrame){
+ const c=mctx.getImageData(22,12,36,36);
+ let b=0;for(let i=0;i<c.data.length;i+=4)b+=c.data[i];
+ updateFace(b/(36*36)>55);
+}
+ prevFrame=f;
+},1000);
+}
+ showToast('\u1f4f7\u0020\u30ab\u30e1\u30e9\u004f\u004e\uff01');
+}catch(e){
+ let m='⚠️ カメラを開けませんでした。';
+ if(e.name==='\u004e\u006f\u0074\u0041\u006c\u006c\u006f\u0077\u0065\u0064\u0045\u0072\u0072\u006f\u0072')m='⚠️ 拒否されました。ブラウザの🔒→許可してください。';
+ else if(e.name==='\u004e\u006f\u0074\u0046\u006f\u0075\u006e\u0064\u0045\u0072\u0072\u006f\u0072')m='⚠️ カメラが見つかりません。';
+ else if(e.name==='\u004e\u006f\u0074\u0052\u0065\u0061\u0064\u0061\u0062\u006c\u0065\u0045\u0072\u0072\u006f\u0072')m='⚠️ カメラが別アプリで使用中です。';
+ else if(location.protocol==='\u0066\u0069\u006c\u0065\u003a')m='\u26a0\ufe0f\u0020\u30ed\u30fc\u30ab\u30eb\u30d5\u30a1\u30a4\u30eb\u3067\u306f\u30ab\u30e1\u30e9\u304c\u5236\u9650\u3055\u308c\u307e\u3059\u3002\u006c\u006f\u0063\u0061\u006c\u0068\u006f\u0073\u0074\u7d4c\u7531\u3067\u958b\u3044\u3066\u304f\u3060\u3055\u3044\u3002';
+ err.textContent=m;err.style.display='\u0062\u006c\u006f\u0063\u006b';
+}
 }
 function skipCamera(){
-  document.getElementById('cam-prompt').style.display='none';
-  document.getElementById('cam-no-cam').style.display='block';
+ document.getElementById('\u0063\u0061\u006d\u002d\u0070\u0072\u006f\u006d\u0070\u0074').style.display='\u006e\u006f\u006e\u0065';
+ document.getElementById('\u0063\u0061\u006d\u002d\u006e\u006f\u002d\u0063\u0061\u006d').style.display='\u0062\u006c\u006f\u0063\u006b';
 }
 function showCamPrompt(){
-  document.getElementById('cam-prompt').style.display='flex';
-  document.getElementById('cam-no-cam').style.display='none';
-  document.getElementById('cam-err').style.display='none';
+ document.getElementById('\u0063\u0061\u006d\u002d\u0070\u0072\u006f\u006d\u0070\u0074').style.display='\u0066\u006c\u0065\u0078';
+ document.getElementById('\u0063\u0061\u006d\u002d\u006e\u006f\u002d\u0063\u0061\u006d').style.display='\u006e\u006f\u006e\u0065';
+ document.getElementById('\u0063\u0061\u006d\u002d\u0065\u0072\u0072').style.display='\u006e\u006f\u006e\u0065';
 }
 function updateFace(det){
-  facePresent=det;
-  const d=document.getElementById('fdot');
-  if(!d)return;
-  const rest=isBreak||stretchFar;
-  d.className='fdot'+(rest?(det?'':' away'):(det?' on':''));
-  document.getElementById('clabel').textContent=
-    rest?(det?'画面見てます':'✅ 離れてます'):(det?'顔を認識中':'顔を向けて');
-  if(rest&&!det)awayCount++;
+ facePresent=det;
+ const d=document.getElementById('\u0066\u0064\u006f\u0074');
+ if(!d)return;
+ const rest=isBreak||stretchFar;
+ d.className='\u0066\u0064\u006f\u0074'+(rest?(det?'':'\u0020\u0061\u0077\u0061\u0079'):(det?' on':''));
+ document.getElementById('\u0063\u006c\u0061\u0062\u0065\u006c').textContent=
+ rest?(det?'画面見てます':'✅ 離れてます'):(det?'顔を認識中':'顔を向けて');
+ if(rest&&!det)awayCount++;
 }
-
-// ======================================================
-// UI共通
-// ======================================================
 function switchTab(name){
-  document.querySelectorAll('.tab').forEach((t,i)=>{
-    t.classList.toggle('active',['timer','stretch','move'][i]===name);
-  });
-  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-  document.getElementById('panel-'+name).classList.add('active');
+ document.querySelectorAll('\u002e\u0074\u0061\u0062').forEach((t,i)=>{
+ t.classList.toggle('\u0061\u0063\u0074\u0069\u0076\u0065',['\u0074\u0069\u006d\u0065\u0072','\u0073\u0074\u0072\u0065\u0074\u0063\u0068','\u006d\u006f\u0076\u0065'][i]===name);
+});
+ document.querySelectorAll('\u002e\u0070\u0061\u006e\u0065\u006c').forEach(p=>p.classList.remove('\u0061\u0063\u0074\u0069\u0076\u0065'));
+ document.getElementById('\u0070\u0061\u006e\u0065\u006c\u002d'+name).classList.add('\u0061\u0063\u0074\u0069\u0076\u0065');
 }
 function showToast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg;t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),3200);
+ const t=document.getElementById('\u0074\u006f\u0061\u0073\u0074');
+ t.textContent=msg;t.classList.add('\u0073\u0068\u006f\u0077');
+ setTimeout(()=>t.classList.remove('\u0073\u0068\u006f\u0077'),3200);
 }
 function addLog(msg){
-  const log=document.getElementById('slog');
-  const em=document.getElementById('logEmpty');if(em)em.remove();
-  const item=document.createElement('div');item.className='li';
-  const n=new Date();
-  item.textContent=`${n.getHours()}:${String(n.getMinutes()).padStart(2,'0')} ${msg}`;
-  log.appendChild(item);log.scrollTop=log.scrollHeight;
+ const log=document.getElementById('\u0073\u006c\u006f\u0067');
+ const em=document.getElementById('\u006c\u006f\u0067\u0045\u006d\u0070\u0074\u0079');if(em)em.remove();
+ const item=document.createElement('div');item.className='li';
+ const n=new Date();
+ item.textContent=`${n.getHours()}:${String(n.getMinutes()).padStart(2,'0')}${msg}`;
+ log.appendChild(item);log.scrollTop=log.scrollHeight;
 }
-
-// ======================================================
-// 音声（シングルトン AudioContext — ブツ切れ防止）
-// ======================================================
 let _actx=null;
 function getACtx(){
-  if(!_actx||_actx.state==='closed')
-    _actx=new(window.AudioContext||window.webkitAudioContext)();
-  if(_actx.state==='suspended')_actx.resume();
-  return _actx;
+ if(!_actx||_actx.state==='\u0063\u006c\u006f\u0073\u0065\u0064')
+ _actx=new(window.AudioContext||window.webkitAudioContext)();
+ if(_actx.state==='\u0073\u0075\u0073\u0070\u0065\u006e\u0064\u0065\u0064')_actx.resume();
+ return _actx;
 }
-// ユーザー操作で AudioContext をアンロック（autoplay policy対策）
-document.addEventListener('click',()=>getACtx(),{once:true});
-
-// スマホ（タッチデバイス）のときだけ部屋ARボタンを表示
-if('ontouchstart' in window || navigator.maxTouchPoints > 0){
-  const btn = document.getElementById('roomModeBtn');
-  if(btn) btn.style.display = 'block';
+document.addEventListener('\u0063\u006c\u0069\u0063\u006b',()=>getACtx(),{once:true});
+if('\u006f\u006e\u0074\u006f\u0075\u0063\u0068\u0073\u0074\u0061\u0072\u0074' in window||navigator.maxTouchPoints>0){
+ const btn=document.getElementById('\u0072\u006f\u006f\u006d\u004d\u006f\u0064\u0065\u0042\u0074\u006e');
+ if(btn)btn.style.display='\u0062\u006c\u006f\u0063\u006b';
 }
-
 let speechOn=true;
 function speak(text){
-  if(!speechOn||!window.speechSynthesis)return;
-  window.speechSynthesis.cancel();
-  const u=new SpeechSynthesisUtterance(text);
-  u.lang='ja-JP';u.rate=0.95;u.pitch=1.0;u.volume=0.9;
-  window.speechSynthesis.speak(u);
+ if(!speechOn||!window.speechSynthesis)return;
+ window.speechSynthesis.cancel();
+ const u=new SpeechSynthesisUtterance(text);
+ u.lang='\u006a\u0061\u002d\u004a\u0050';u.rate=0.95;u.pitch=1.0;u.volume=0.9;
+ window.speechSynthesis.speak(u);
 }
-
-// 汎用ビープ（短く）
 function beep(freq=880,dur=120,vol=0.13){
-  try{
-    const ctx=getACtx(),now=ctx.currentTime;
-    const o=ctx.createOscillator(),g=ctx.createGain();
-    o.connect(g);g.connect(ctx.destination);
-    o.type='sine';o.frequency.value=freq;
-    // アタック5ms・ディケイ — クリックノイズなし
-    g.gain.setValueAtTime(0,now);
-    g.gain.linearRampToValueAtTime(vol,now+0.005);
-    g.gain.exponentialRampToValueAtTime(0.001,now+dur/1000);
-    o.start(now);o.stop(now+dur/1000+0.01);
-  }catch(e){}
+ try{
+ const ctx=getACtx(),now=ctx.currentTime;
+ const o=ctx.createOscillator(),g=ctx.createGain();
+ o.connect(g);g.connect(ctx.destination);
+ o.type='\u0073\u0069\u006e\u0065';o.frequency.value=freq;
+ g.gain.setValueAtTime(0,now);
+ g.gain.linearRampToValueAtTime(vol,now+0.005);
+ g.gain.exponentialRampToValueAtTime(0.001,now+dur/1000);
+ o.start(now);o.stop(now+dur/1000+0.01);
+}catch(e){}
 }
-
-// 眼球運動用スウォッシュ（方向感のある音）
-function swoosh(dir='down'){
-  try{
-    const ctx=getACtx(),now=ctx.currentTime;
-    const o=ctx.createOscillator(),g=ctx.createGain(),f=ctx.createBiquadFilter();
-    f.type='bandpass';f.frequency.value=1200;f.Q.value=0.7;
-    o.connect(f);f.connect(g);g.connect(ctx.destination);
-    o.type='sine';
-    const dur=0.48;
-    if(dir==='down'){
-      o.frequency.setValueAtTime(1350,now);
-      o.frequency.exponentialRampToValueAtTime(290,now+dur);
-    } else if(dir==='up'){
-      o.frequency.setValueAtTime(310,now);
-      o.frequency.exponentialRampToValueAtTime(1400,now+dur);
-    } else {
-      o.frequency.setValueAtTime(1050,now);
-      o.frequency.exponentialRampToValueAtTime(460,now+dur*0.5);
-      o.frequency.exponentialRampToValueAtTime(720,now+dur);
-    }
-    g.gain.setValueAtTime(0,now);
-    g.gain.linearRampToValueAtTime(0.15,now+0.03);
-    g.gain.linearRampToValueAtTime(0.09,now+dur*0.65);
-    g.gain.linearRampToValueAtTime(0,now+dur);
-    o.start(now);o.stop(now+dur+0.02);
-  }catch(e){}
+function swoosh(dir='\u0064\u006f\u0077\u006e'){
+ try{
+ const ctx=getACtx(),now=ctx.currentTime;
+ const o=ctx.createOscillator(),g=ctx.createGain(),f=ctx.createBiquadFilter();
+ f.type='\u0062\u0061\u006e\u0064\u0070\u0061\u0073\u0073';f.frequency.value=1200;f.Q.value=0.7;
+ o.connect(f);f.connect(g);g.connect(ctx.destination);
+ o.type='\u0073\u0069\u006e\u0065';
+ const dur=0.48;
+ if(dir==='\u0064\u006f\u0077\u006e'){
+ o.frequency.setValueAtTime(1350,now);
+ o.frequency.exponentialRampToValueAtTime(290,now+dur);
+}else if(dir==='up'){
+ o.frequency.setValueAtTime(310,now);
+ o.frequency.exponentialRampToValueAtTime(1400,now+dur);
+}else{
+ o.frequency.setValueAtTime(1050,now);
+ o.frequency.exponentialRampToValueAtTime(460,now+dur*0.5);
+ o.frequency.exponentialRampToValueAtTime(720,now+dur);
 }
-
-// 遠近ストレッチ専用チャイム（柔らかいベル系）
-// dir: 'near'=近く(高め・短い余韻) / 'far'=遠く(低め・長い余韻)
-function chime(dir='near'){
-  try{
-    const ctx=getACtx(),now=ctx.currentTime;
-    // メイン音（正弦波 + 倍音）
-    const freqs=dir==='near'?[660,1320,1980]:[370,740,1110];
-    const vols=[0.13,0.055,0.025];
-    const sustain=dir==='near'?0.55:0.9; // 遠くは余韻長め
-    freqs.forEach((fr,i)=>{
-      const o=ctx.createOscillator(),g=ctx.createGain();
-      o.connect(g);g.connect(ctx.destination);
-      o.type='sine';o.frequency.value=fr;
-      g.gain.setValueAtTime(0,now);
-      g.gain.linearRampToValueAtTime(vols[i],now+0.008); // 素早いアタック
-      g.gain.exponentialRampToValueAtTime(0.001,now+sustain+(i*0.12));
-      o.start(now);o.stop(now+sustain+0.3);
-    });
-  }catch(e){}
+ g.gain.setValueAtTime(0,now);
+ g.gain.linearRampToValueAtTime(0.15,now+0.03);
+ g.gain.linearRampToValueAtTime(0.09,now+dur*0.65);
+ g.gain.linearRampToValueAtTime(0,now+dur);
+ o.start(now);o.stop(now+dur+0.02);
+}catch(e){}
 }
-
-// ======================================================
-// 20-20-20 タイマー
-// ======================================================
+function chime(dir='\u006e\u0065\u0061\u0072'){
+ try{
+ const ctx=getACtx(),now=ctx.currentTime;
+ const freqs=dir==='\u006e\u0065\u0061\u0072'?[660,1320,1980]:[370,740,1110];
+ const vols=[0.13,0.055,0.025];
+ const sustain=dir==='\u006e\u0065\u0061\u0072'?0.55:0.9;
+ freqs.forEach((fr,i)=>{
+ const o=ctx.createOscillator(),g=ctx.createGain();
+ o.connect(g);g.connect(ctx.destination);
+ o.type='\u0073\u0069\u006e\u0065';o.frequency.value=fr;
+ g.gain.setValueAtTime(0,now);
+ g.gain.linearRampToValueAtTime(vols[i],now+0.008);
+ g.gain.exponentialRampToValueAtTime(0.001,now+sustain+(i*0.12));
+ o.start(now);o.stop(now+sustain+0.3);
+});
+}catch(e){}
+}
 const WORK=1200,BREAK=20,ARC=502.7;
 let tRun=false,tInt=null,tRem=WORK,isBreak=false,stBreaks=0,stWork=0,bCd=20;
-
 function toggleTimer(){
-  if(tRun){clearInterval(tInt);tRun=false;document.getElementById('timerBtn').textContent='再開';}
-  else{tRun=true;document.getElementById('timerBtn').textContent='一時停止';tInt=setInterval(tickT,1000);}
+ if(tRun){clearInterval(tInt);tRun=false;document.getElementById('\u0074\u0069\u006d\u0065\u0072\u0042\u0074\u006e').textContent='再開';}
+ else{tRun=true;document.getElementById('\u0074\u0069\u006d\u0065\u0072\u0042\u0074\u006e').textContent='一時停止';tInt=setInterval(tickT,1000);}
 }
 function resetTimer(){
-  clearInterval(tInt);tRun=false;isBreak=false;tRem=WORK;bCd=20;
-  document.getElementById('timerBtn').textContent='スタート';
-  document.getElementById('timerPhase').textContent='作業モード';
-  document.getElementById('timerArc').style.stroke='#4a80ff';
-  document.getElementById('break-cam').style.display='none';
-  document.getElementById('away-st').textContent='';
-  updateTimerUI();
+ clearInterval(tInt);tRun=false;isBreak=false;tRem=WORK;bCd=20;
+ document.getElementById('\u0074\u0069\u006d\u0065\u0072\u0042\u0074\u006e').textContent='スタート';
+ document.getElementById('\u0074\u0069\u006d\u0065\u0072\u0050\u0068\u0061\u0073\u0065').textContent='作業モード';
+ document.getElementById('\u0074\u0069\u006d\u0065\u0072\u0041\u0072\u0063').style.stroke='\u0023\u0034\u0061\u0038\u0030\u0066\u0066';
+ document.getElementById('\u0062\u0072\u0065\u0061\u006b\u002d\u0063\u0061\u006d').style.display='\u006e\u006f\u006e\u0065';
+ document.getElementById('\u0061\u0077\u0061\u0079\u002d\u0073\u0074').textContent='';
+ updateTimerUI();
 }
 function tickT(){
-  tRem--;
-  if(tRem<=0){
-    if(!isBreak){
-      isBreak=true;tRem=BREAK;bCd=BREAK;stWork++;
-      document.getElementById('stWork').textContent=stWork;
-      document.getElementById('timerPhase').textContent='👁 遠くを見て！';
-      document.getElementById('timerArc').style.stroke='#4aff80';
-      if(camEnabled)document.getElementById('break-cam').style.display='block';
-      showToast('👁 20秒 遠くを眺めて');speak('休憩です。遠くを見てください。');beep(660,150);
-      addLog('作業セット完了 → 休憩');
-    } else {
-      isBreak=false;tRem=WORK;stBreaks++;
-      document.getElementById('stBreaks').textContent=stBreaks;
-      document.getElementById('stAway').textContent=awayCount;
-      document.getElementById('timerPhase').textContent='作業モード';
-      document.getElementById('timerArc').style.stroke='#4a80ff';
-      document.getElementById('break-cam').style.display='none';
-      document.getElementById('away-st').textContent='';
-      showToast('✅ 休憩完了！');addLog('休憩完了');
-    }
-  }
-  if(isBreak){
-    bCd=tRem;document.getElementById('break-cd').textContent=bCd;
-    if(camEnabled)document.getElementById('away-st').textContent=
-      facePresent?'😅 まだ画面を見ています':'✅ 離れています！';
-  }
-  updateTimerUI();
+ tRem--;
+ if(tRem<=0){
+ if(!isBreak){
+ isBreak=true;tRem=BREAK;bCd=BREAK;stWork++;
+ document.getElementById('\u0073\u0074\u0057\u006f\u0072\u006b').textContent=stWork;
+ document.getElementById('\u0074\u0069\u006d\u0065\u0072\u0050\u0068\u0061\u0073\u0065').textContent='👁 遠くを見て！';
+ document.getElementById('\u0074\u0069\u006d\u0065\u0072\u0041\u0072\u0063').style.stroke='\u0023\u0034\u0061\u0066\u0066\u0038\u0030';
+ if(camEnabled)document.getElementById('\u0062\u0072\u0065\u0061\u006b\u002d\u0063\u0061\u006d').style.display='\u0062\u006c\u006f\u0063\u006b';
+ showToast('👁 20秒 遠くを眺めて');speak('休憩です。遠くを見てください。');beep(660,150);
+ addLog('作業セット完了 → 休憩');
+}else{
+ isBreak=false;tRem=WORK;stBreaks++;
+ document.getElementById('\u0073\u0074\u0042\u0072\u0065\u0061\u006b\u0073').textContent=stBreaks;
+ document.getElementById('\u0073\u0074\u0041\u0077\u0061\u0079').textContent=awayCount;
+ document.getElementById('\u0074\u0069\u006d\u0065\u0072\u0050\u0068\u0061\u0073\u0065').textContent='作業モード';
+ document.getElementById('\u0074\u0069\u006d\u0065\u0072\u0041\u0072\u0063').style.stroke='\u0023\u0034\u0061\u0038\u0030\u0066\u0066';
+ document.getElementById('\u0062\u0072\u0065\u0061\u006b\u002d\u0063\u0061\u006d').style.display='\u006e\u006f\u006e\u0065';
+ document.getElementById('\u0061\u0077\u0061\u0079\u002d\u0073\u0074').textContent='';
+ showToast('✅ 休憩完了！');addLog('休憩完了');
+}
+}
+ if(isBreak){
+ bCd=tRem;document.getElementById('\u0062\u0072\u0065\u0061\u006b\u002d\u0063\u0064').textContent=bCd;
+ if(camEnabled)document.getElementById('\u0061\u0077\u0061\u0079\u002d\u0073\u0074').textContent=
+ facePresent?'😅 まだ画面を見ています':'✅ 離れています！';
+}
+ updateTimerUI();
 }
 function updateTimerUI(){
-  const tot=isBreak?BREAK:WORK;
-  const m=Math.floor(tRem/60),s=tRem%60;
-  document.getElementById('timerDisplay').textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
-  document.getElementById('timerSub').textContent=isBreak?'遠くを見る':`あと${m}分`;
-  document.getElementById('timerArc').style.strokeDashoffset=ARC*(1-tRem/tot);
+ const tot=isBreak?BREAK:WORK;
+ const m=Math.floor(tRem/60),s=tRem%60;
+ document.getElementById('\u0074\u0069\u006d\u0065\u0072\u0044\u0069\u0073\u0070\u006c\u0061\u0079').textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+ document.getElementById('\u0074\u0069\u006d\u0065\u0072\u0053\u0075\u0062').textContent=isBreak?'遠くを見る':`あと${m}分`;
+ document.getElementById('\u0074\u0069\u006d\u0065\u0072\u0041\u0072\u0063').style.strokeDashoffset=ARC*(1-tRem/tot);
 }
 updateTimerUI();
-
-// ======================================================
-// 遠近ストレッチ ＋ 確率的共鳴ノイズ
-// ======================================================
 let sRun=false,sInt=null,sFar=false,sReps=0;
-let sNearMs=9000,sFarMs=7000; // デフォルト：普通ペース
+let sNearMs=9000,sFarMs=7000;
 let sCdInt=null,sCdRem=0,sCdTotal=0;
-
 function setStretchPace(nearSec,farSec,btn){
-  sNearMs=nearSec*1000;sFarMs=farSec*1000;
-  document.querySelectorAll('#space-sel .mmode').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
+ sNearMs=nearSec*1000;sFarMs=farSec*1000;
+ document.querySelectorAll('\u0023\u0073\u0070\u0061\u0063\u0065\u002d\u0073\u0065\u006c\u0020\u002e\u006d\u006d\u006f\u0064\u0065').forEach(b=>b.classList.remove('\u0061\u0063\u0074\u0069\u0076\u0065'));
+ btn.classList.add('\u0061\u0063\u0074\u0069\u0076\u0065');
 }
-
-// フェーズ内カウントダウン（1秒ごと更新）
 function startPhaseCd(totalMs){
-  clearInterval(sCdInt);
-  sCdTotal=Math.round(totalMs/1000);
-  sCdRem=sCdTotal;
-  const wrap=document.getElementById('phase-cd-wrap');
-  wrap.style.display='block';
-  updatePhaseCdUI();
-  sCdInt=setInterval(()=>{
-    sCdRem--;
-    updatePhaseCdUI();
-    // 残り3秒：カチッ音で予告
-    if(sCdRem===3){
-      beep(1100,60,0.08);
-    } else if(sCdRem===2||sCdRem===1){
-      beep(1100,55,0.07);
-    }
-  },1000);
+ clearInterval(sCdInt);
+ sCdTotal=Math.round(totalMs/1000);
+ sCdRem=sCdTotal;
+ const wrap=document.getElementById('\u0070\u0068\u0061\u0073\u0065\u002d\u0063\u0064\u002d\u0077\u0072\u0061\u0070');
+ wrap.style.display='\u0062\u006c\u006f\u0063\u006b';
+ updatePhaseCdUI();
+ sCdInt=setInterval(()=>{
+ sCdRem--;
+ updatePhaseCdUI();
+ if(sCdRem===3){
+ beep(1100,60,0.08);
+}else if(sCdRem===2||sCdRem===1){
+ beep(1100,55,0.07);
+}
+},1000);
 }
 function updatePhaseCdUI(){
-  const num=document.getElementById('phase-cd-num');
-  const arc=document.getElementById('phase-arc');
-  const sub=document.getElementById('phase-cd-sub');
-  if(!num)return;
-  num.textContent=Math.max(0,sCdRem);
-  const pct=sCdRem/sCdTotal;
-  arc.style.strokeDashoffset=188.5*(1-pct);
-  // 残り3秒で色をオレンジ→赤へ
-  const col=pct>0.35?'#4a80ff':sCdRem>1?'#ffa040':'#ff4060';
-  arc.style.stroke=col;
-  num.style.color=pct>0.35?'rgba(160,196,255,0.9)':sCdRem>1?'#ffa040':'#ff6060';
-  sub.textContent=sCdRem>0?'秒後に切替':'切替中…';
+ const num=document.getElementById('\u0070\u0068\u0061\u0073\u0065\u002d\u0063\u0064\u002d\u006e\u0075\u006d');
+ const arc=document.getElementById('\u0070\u0068\u0061\u0073\u0065\u002d\u0061\u0072\u0063');
+ const sub=document.getElementById('\u0070\u0068\u0061\u0073\u0065\u002d\u0063\u0064\u002d\u0073\u0075\u0062');
+ if(!num)return;
+ num.textContent=Math.max(0,sCdRem);
+ const pct=sCdRem/sCdTotal;
+ arc.style.strokeDashoffset=188.5*(1-pct);
+ const col=pct>0.35?'\u0023\u0034\u0061\u0038\u0030\u0066\u0066':sCdRem>1?'\u0023\u0066\u0066\u0061\u0030\u0034\u0030':'\u0023\u0066\u0066\u0034\u0030\u0036\u0030';
+ arc.style.stroke=col;
+ num.style.color=pct>0.35?'\u0072\u0067\u0062\u0061\u0028\u0031\u0036\u0030\u002c\u0031\u0039\u0036\u002c\u0032\u0035\u0035\u002c\u0030\u002e\u0039\u0029':sCdRem>1?'\u0023\u0066\u0066\u0061\u0030\u0034\u0030':'\u0023\u0066\u0066\u0036\u0030\u0036\u0030';
+ sub.textContent=sCdRem>0?'秒後に切替':'切替中…';
 }
 function stopPhaseCd(){
-  clearInterval(sCdInt);
-  document.getElementById('phase-cd-wrap').style.display='none';
+ clearInterval(sCdInt);
+ document.getElementById('\u0070\u0068\u0061\u0073\u0065\u002d\u0063\u0064\u002d\u0077\u0072\u0061\u0070').style.display='\u006e\u006f\u006e\u0065';
 }
 let noiseRAF=null;
-
-// ガウスノイズ（Box-Muller）
 function gaussNoise(){
-  const u1=Math.random()||1e-10,u2=Math.random();
-  return Math.sqrt(-2*Math.log(u1))*Math.cos(2*Math.PI*u2);
+ const u1=Math.random()||1e-10,u2=Math.random();
+ return Math.sqrt(-2*Math.log(u1))*Math.cos(2*Math.PI*u2);
 }
-
-// ======================================================
-// 確率的共鳴 ＋ ブラー演出
-//
-// フェーズ開始時：大きめ＋blur 7px（ピント未定状態を再現）
-//   → entryBlur が3秒かけてゼロに減衰（徐々にシャープに）
-//   → 以後は SR サイズ変動と連動した srBlur が残る
-//      （大きい=遠い感じ→少しボケ / 基準サイズ=シャープ）
-// filter:blur は box-shadow にも効くため
-// グローごとボケ→くっきり の自然な見え方になる
-// ======================================================
-let nearPhaseStartT=0; // 近フェーズ開始時刻（秒）
-
+let nearPhaseStartT=0;
 function animateNoiseDot(){
-  if(!sRun||sFar){noiseRAF=null;return;}
-  const t=performance.now()/1000;
-  const elapsed=t-nearPhaseStartT;
-
-  // メイン：5秒で一往復（0.2Hz）
-  const mainRhythm=Math.sin(t*2*Math.PI/5);
-
-  // 低周波ノイズ：無理数比の3波（0.12〜0.23Hz帯）
-  const lfNoise=
-    0.40*Math.sin(t*0.938+1.23)+
-    0.35*Math.sin(t*1.461+2.71)+
-    0.25*Math.sin(t*0.776+0.87);
-
-  const base=18,amp=10,noiseAmp=4;
-  const sz=Math.max(10,Math.min(36,base+amp*mainRhythm+noiseAmp*lfNoise));
-
-  // entryBlur：開始時7px → 3秒で0へ減衰
-  const FADE=3.0;
-  const entryBlur=Math.max(0, 7*(1-elapsed/FADE));
-
-  // srBlur：基準サイズからの乖離に比例（ピントの「探り」感）
-  const srBlur=Math.abs(sz-base)*0.22;
-
-  const blur=(entryBlur+srBlur).toFixed(2);
-
-  const dot=document.getElementById('focusDot');
-  dot.style.width=sz+'px';
-  dot.style.height=sz+'px';
-  dot.style.filter=`blur(${blur}px)`;
-  dot.style.boxShadow=`0 0 ${sz*0.85}px rgba(74,128,255,0.8),0 0 ${sz*2.2}px rgba(74,128,255,0.22)`;
-  noiseRAF=requestAnimationFrame(animateNoiseDot);
+ if(!sRun||sFar){noiseRAF=null;return;}
+ const t=performance.now()/1000;
+ const elapsed=t-nearPhaseStartT;
+ const mainRhythm=Math.sin(t*2*Math.PI/5);
+ const lfNoise=
+ 0.40*Math.sin(t*0.938+1.23)+
+ 0.35*Math.sin(t*1.461+2.71)+
+ 0.25*Math.sin(t*0.776+0.87);
+ const base=18,amp=10,noiseAmp=4;
+ const sz=Math.max(10,Math.min(36,base+amp*mainRhythm+noiseAmp*lfNoise));
+ const FADE=3.0;
+ const entryBlur=Math.max(0,7*(1-elapsed/FADE));
+ const srBlur=Math.abs(sz-base)*0.22;
+ const blur=(entryBlur+srBlur).toFixed(2);
+ const dot=document.getElementById('\u0066\u006f\u0063\u0075\u0073\u0044\u006f\u0074');
+ dot.style.width=sz+'px';
+ dot.style.height=sz+'px';
+ dot.style.filter=`blur(${blur}px)`;
+ dot.style.boxShadow=`0 0 ${sz*0.85}px rgba(74,128,255,0.8),0 0 ${sz*2.2}px rgba(74,128,255,0.22)`;
+ noiseRAF=requestAnimationFrame(animateNoiseDot);
 }
-
 function toggleStretch(){
-  if(sRun){
-    clearTimeout(sInt);sRun=false;sFar=false;
-    stopPhaseCd();
-    cancelAnimationFrame(noiseRAF);noiseRAF=null;
-    document.getElementById('stretchBtn').textContent='スタート';
-    document.getElementById('stretchLabel').textContent='スタートを押してください';
-    document.getElementById('stretchCount').textContent='';
-    document.getElementById('focusDot').className='';
-    const dot=document.getElementById('focusDot');
-    dot.style.cssText='width:22px;height:22px;border-radius:50%;background:#4a80ff;box-shadow:0 0 18px rgba(74,128,255,0.85),0 0 50px rgba(74,128,255,0.3);';
-    document.getElementById('far-cam').style.display='none';
-    document.getElementById('stretchArea').style.display='flex';
-    document.getElementById('noiseBadge').style.display='none';
-  } else {
-    sRun=true;sReps=0;sFar=false;
-    document.getElementById('stretchBtn').textContent='停止';
-    document.getElementById('noiseBadge').style.display='block';
-    if(sGoal>0){
-      document.getElementById('stretch-prog-wrap').style.display='block';
-      document.getElementById('stretch-prog-bar').style.width='0%';
-    }
-    scheduleStretch();
-  }
+ if(sRun){
+ clearTimeout(sInt);sRun=false;sFar=false;
+ stopPhaseCd();
+ cancelAnimationFrame(noiseRAF);noiseRAF=null;
+ document.getElementById('\u0073\u0074\u0072\u0065\u0074\u0063\u0068\u0042\u0074\u006e').textContent='スタート';
+ document.getElementById('\u0073\u0074\u0072\u0065\u0074\u0063\u0068\u004c\u0061\u0062\u0065\u006c').textContent='スタートを押してください';
+ document.getElementById('\u0073\u0074\u0072\u0065\u0074\u0063\u0068\u0043\u006f\u0075\u006e\u0074').textContent='';
+ document.getElementById('\u0066\u006f\u0063\u0075\u0073\u0044\u006f\u0074').className='';
+ const dot=document.getElementById('\u0066\u006f\u0063\u0075\u0073\u0044\u006f\u0074');
+ dot.style.cssText='\u0077\u0069\u0064\u0074\u0068\u003a\u0032\u0032\u0070\u0078\u003b\u0068\u0065\u0069\u0067\u0068\u0074\u003a\u0032\u0032\u0070\u0078\u003b\u0062\u006f\u0072\u0064\u0065\u0072\u002d\u0072\u0061\u0064\u0069\u0075\u0073\u003a\u0035\u0030\u0025\u003b\u0062\u0061\u0063\u006b\u0067\u0072\u006f\u0075\u006e\u0064\u003a\u0023\u0034\u0061\u0038\u0030\u0066\u0066\u003b\u0062\u006f\u0078\u002d\u0073\u0068\u0061\u0064\u006f\u0077\u003a\u0030\u0020\u0030\u0020\u0031\u0038\u0070\u0078\u0020\u0072\u0067\u0062\u0061\u0028\u0037\u0034\u002c\u0031\u0032\u0038\u002c\u0032\u0035\u0035\u002c\u0030\u002e\u0038\u0035\u0029\u002c\u0030\u0020\u0030\u0020\u0035\u0030\u0070\u0078\u0020\u0072\u0067\u0062\u0061\u0028\u0037\u0034\u002c\u0031\u0032\u0038\u002c\u0032\u0035\u0035\u002c\u0030\u002e\u0033\u0029\u003b';
+ document.getElementById('\u0066\u0061\u0072\u002d\u0063\u0061\u006d').style.display='\u006e\u006f\u006e\u0065';
+ document.getElementById('\u0073\u0074\u0072\u0065\u0074\u0063\u0068\u0041\u0072\u0065\u0061').style.display='\u0066\u006c\u0065\u0078';
+ document.getElementById('\u006e\u006f\u0069\u0073\u0065\u0042\u0061\u0064\u0067\u0065').style.display='\u006e\u006f\u006e\u0065';
+}else{
+ sRun=true;sReps=0;sFar=false;
+ document.getElementById('\u0073\u0074\u0072\u0065\u0074\u0063\u0068\u0042\u0074\u006e').textContent='停止';
+ document.getElementById('\u006e\u006f\u0069\u0073\u0065\u0042\u0061\u0064\u0067\u0065').style.display='\u0062\u006c\u006f\u0063\u006b';
+ if(sGoal>0){
+ document.getElementById('\u0073\u0074\u0072\u0065\u0074\u0063\u0068\u002d\u0070\u0072\u006f\u0067\u002d\u0077\u0072\u0061\u0070').style.display='\u0062\u006c\u006f\u0063\u006b';
+ document.getElementById('\u0073\u0074\u0072\u0065\u0074\u0063\u0068\u002d\u0070\u0072\u006f\u0067\u002d\u0062\u0061\u0072').style.width='0%';
 }
-// 近/遠それぞれ異なる秒数を使うためsetTimeoutチェーンに変更
+ scheduleStretch();
+}
+}
 function scheduleStretch(){
-  if(!sRun)return;
-  runStretch();
-  // 今sFar=true(遠)ならsFarMs後、false(近)ならsNearMs後に次へ
-  const wait=sFar?sFarMs:sNearMs;
-  startPhaseCd(wait); // カウントダウン開始
-  sInt=setTimeout(scheduleStretch,wait);
+ if(!sRun)return;
+ runStretch();
+ const wait=sFar?sFarMs:sNearMs;
+ startPhaseCd(wait);
+ sInt=setTimeout(scheduleStretch,wait);
 }
-
 function runStretch(){
-  sFar=!sFar;
-  const label=document.getElementById('stretchLabel');
-  const nearSec=sNearMs/1000,farSec=sFarMs/1000;
-  if(sFar){
-    document.getElementById('focusDot').className='far';
-    document.getElementById('focusDot').style.filter='none';
-    label.textContent=`🔭 遠くを見てください（${farSec}秒）`;
-    speak('遠くを見てください');chime('far');
-    cancelAnimationFrame(noiseRAF);noiseRAF=null;
-    if(camEnabled){
-      document.getElementById('far-cam').style.display='block';
-      document.getElementById('stretchArea').style.display='none';
-    }
-    sReps++;
-  } else {
-    document.getElementById('focusDot').className='';
-    label.textContent=`🔵 点にピントを合わせて（${nearSec}秒）`;
-    speak('近くの点を見てください');chime('near');
-    document.getElementById('far-cam').style.display='none';
-    document.getElementById('stretchArea').style.display='flex';
-    // 近フェーズ開始：大きめ＋ぼかしでスタート
-    nearPhaseStartT=performance.now()/1000;
-    const dot=document.getElementById('focusDot');
-    dot.style.width='34px';dot.style.height='34px';
-    dot.style.filter='blur(7px)';
-    if(!noiseRAF)noiseRAF=requestAnimationFrame(animateNoiseDot);
-  }
-  const goalTxt=sGoal>0?` / ${sGoal}セット`:'';
-  document.getElementById('stretchCount').textContent=`${sReps}${goalTxt} 完了`;
-  if(sGoal>0){
-    const pct=Math.min(100,sReps/sGoal*100);
-    document.getElementById('stretch-prog-bar').style.width=pct+'%';
-    if(sReps>=sGoal){
-      clearTimeout(sInt);sRun=false;stopPhaseCd();
-      speak('お疲れ様でした！遠近ストレッチ完了です。');
-      beep(660,120);setTimeout(()=>beep(880,180),200);
-      showToast(`✅ ${sGoal}セット完了！お疲れ様でした`);
-      document.getElementById('stretchBtn').textContent='スタート';
-      document.getElementById('noiseBadge').style.display='none';
-      cancelAnimationFrame(noiseRAF);noiseRAF=null;
-      addLog(`遠近ストレッチ ${sGoal}セット完了`);
-    }
-  }
+ sFar=!sFar;
+ const label=document.getElementById('\u0073\u0074\u0072\u0065\u0074\u0063\u0068\u004c\u0061\u0062\u0065\u006c');
+ const nearSec=sNearMs/1000,farSec=sFarMs/1000;
+ if(sFar){
+ document.getElementById('\u0066\u006f\u0063\u0075\u0073\u0044\u006f\u0074').className='far';
+ document.getElementById('\u0066\u006f\u0063\u0075\u0073\u0044\u006f\u0074').style.filter='\u006e\u006f\u006e\u0065';
+ label.textContent=`🔭 遠くを見てください（${farSec}秒）`;
+ speak('遠くを見てください');chime('far');
+ cancelAnimationFrame(noiseRAF);noiseRAF=null;
+ if(camEnabled){
+ document.getElementById('\u0066\u0061\u0072\u002d\u0063\u0061\u006d').style.display='\u0062\u006c\u006f\u0063\u006b';
+ document.getElementById('\u0073\u0074\u0072\u0065\u0074\u0063\u0068\u0041\u0072\u0065\u0061').style.display='\u006e\u006f\u006e\u0065';
 }
-
-// ======================================================
-// 眼球運動 目標時間 & セッションタイマー
-// ======================================================
-let moveDurSec=120; // デフォルト2分
+ sReps++;
+}else{
+ document.getElementById('\u0066\u006f\u0063\u0075\u0073\u0044\u006f\u0074').className='';
+ label.textContent=`🔵 点にピントを合わせて（${nearSec}秒）`;
+ speak('近くの点を見てください');chime('\u006e\u0065\u0061\u0072');
+ document.getElementById('\u0066\u0061\u0072\u002d\u0063\u0061\u006d').style.display='\u006e\u006f\u006e\u0065';
+ document.getElementById('\u0073\u0074\u0072\u0065\u0074\u0063\u0068\u0041\u0072\u0065\u0061').style.display='\u0066\u006c\u0065\u0078';
+ nearPhaseStartT=performance.now()/1000;
+ const dot=document.getElementById('\u0066\u006f\u0063\u0075\u0073\u0044\u006f\u0074');
+ dot.style.width='\u0033\u0034\u0070\u0078';dot.style.height='\u0033\u0034\u0070\u0078';
+ dot.style.filter='\u0062\u006c\u0075\u0072\u0028\u0037\u0070\u0078\u0029';
+ if(!noiseRAF)noiseRAF=requestAnimationFrame(animateNoiseDot);
+}
+ const goalTxt=sGoal>0?`/${sGoal}セット`:'';
+ document.getElementById('\u0073\u0074\u0072\u0065\u0074\u0063\u0068\u0043\u006f\u0075\u006e\u0074').textContent=`${sReps}${goalTxt}完了`;
+ if(sGoal>0){
+ const pct=Math.min(100,sReps/sGoal*100);
+ document.getElementById('\u0073\u0074\u0072\u0065\u0074\u0063\u0068\u002d\u0070\u0072\u006f\u0067\u002d\u0062\u0061\u0072').style.width=pct+'%';
+ if(sReps>=sGoal){
+ clearTimeout(sInt);sRun=false;stopPhaseCd();
+ speak('お疲れ様でした！遠近ストレッチ完了です。');
+ beep(660,120);setTimeout(()=>beep(880,180),200);
+ showToast(`✅ ${sGoal}セット完了！お疲れ様でした`);
+ document.getElementById('\u0073\u0074\u0072\u0065\u0074\u0063\u0068\u0042\u0074\u006e').textContent='スタート';
+ document.getElementById('\u006e\u006f\u0069\u0073\u0065\u0042\u0061\u0064\u0067\u0065').style.display='\u006e\u006f\u006e\u0065';
+ cancelAnimationFrame(noiseRAF);noiseRAF=null;
+ addLog(`遠近ストレッチ ${sGoal}セット完了`);
+}
+}
+}
+let moveDurSec=120;
 let moveRemSec=120;
 let mTimerInt=null;
-
 function setDur(sec,btn){
-  moveDurSec=sec;
-  document.querySelectorAll('#dur-sel .mmode').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
+ moveDurSec=sec;
+ document.querySelectorAll('\u0023\u0064\u0075\u0072\u002d\u0073\u0065\u006c\u0020\u002e\u006d\u006d\u006f\u0064\u0065').forEach(b=>b.classList.remove('\u0061\u0063\u0074\u0069\u0076\u0065'));
+ btn.classList.add('\u0061\u0063\u0074\u0069\u0076\u0065');
 }
-
 function startMoveTimer(){
-  moveRemSec=moveDurSec;
-  updateMoveTimerUI();
-  mTimerInt=setInterval(()=>{
-    moveRemSec--;
-    updateMoveTimerUI();
-    if(moveRemSec<=0){
-      clearInterval(mTimerInt);
-      // 完了
-      speak('お疲れ様でした！セッション終了です。');
-      beep(660,120);
-      setTimeout(()=>beep(880,180),200);
-      showToast('✅ セッション完了！お疲れ様でした');
-      setTimeout(exitMove,1800);
-    } else if(moveRemSec===10){
-      speak('あと10秒です。');
-    }
-  },1000);
+ moveRemSec=moveDurSec;
+ updateMoveTimerUI();
+ mTimerInt=setInterval(()=>{
+ moveRemSec--;
+ updateMoveTimerUI();
+ if(moveRemSec<=0){
+ clearInterval(mTimerInt);
+ speak('お疲れ様でした！セッション終了です。');
+ beep(660,120);
+ setTimeout(()=>beep(880,180),200);
+ showToast('✅ セッション完了！お疲れ様でした');
+ setTimeout(exitMove,1800);
+}else if(moveRemSec===10){
+ speak('あと10秒です。');
 }
-
+},1000);
+}
 function updateMoveTimerUI(){
-  const el=document.getElementById('fs-time-rem');
-  const arc=document.getElementById('fs-ring-arc');
-  if(!el)return;
-  const m=Math.floor(moveRemSec/60),s=moveRemSec%60;
-  el.textContent=m+':'+String(s).padStart(2,'0');
-  const pct=moveRemSec/moveDurSec;
-  const CIRC=188.5;
-  arc.style.strokeDashoffset=CIRC*(1-pct);
-  // 残り少ないと色を赤に
-  arc.style.stroke=pct>0.25?'#4a80ff':pct>0.1?'#ffa040':'#ff4060';
+ const el=document.getElementById('\u0066\u0073\u002d\u0074\u0069\u006d\u0065\u002d\u0072\u0065\u006d');
+ const arc=document.getElementById('\u0066\u0073\u002d\u0072\u0069\u006e\u0067\u002d\u0061\u0072\u0063');
+ if(!el)return;
+ const m=Math.floor(moveRemSec/60),s=moveRemSec%60;
+ el.textContent=m+':'+String(s).padStart(2,'0');
+ const pct=moveRemSec/moveDurSec;
+ const CIRC=188.5;
+ arc.style.strokeDashoffset=CIRC*(1-pct);
+ arc.style.stroke=pct>0.25?'\u0023\u0034\u0061\u0038\u0030\u0066\u0066':pct>0.1?'\u0023\u0066\u0066\u0061\u0030\u0034\u0030':'\u0023\u0066\u0066\u0034\u0030\u0036\u0030';
 }
-
-// ======================================================
-// 遠近ストレッチ 目標セット数
-// ======================================================
 let sGoal=10;
 function setSGoal(n,btn){
-  sGoal=n;
-  document.querySelectorAll('#sdur-sel .mmode').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
+ sGoal=n;
+ document.querySelectorAll('\u0023\u0073\u0064\u0075\u0072\u002d\u0073\u0065\u006c\u0020\u002e\u006d\u006d\u006f\u0064\u0065').forEach(b=>b.classList.remove('\u0061\u0063\u0074\u0069\u0076\u0065'));
+ btn.classList.add('\u0061\u0063\u0074\u0069\u0076\u0065');
 }
-
-// ======================================================
-// 眼球運動（フルスクリーン・方向別カラー・5モード）
-// ======================================================
 let mRun=false,mInt=null,mStep=0,mSet=0;
-let moveMode='standard';
-let randNext={x:0,y:0}; // ランダムモード先読み
-
+let moveMode='\u0073\u0074\u0061\u006e\u0064\u0061\u0072\u0064';
+let randNext={x:0,y:0};
 const DIR_NAMES=['上','右上','右','右下','下','左下','左','左上','中央'];
-const DIR_COLORS=['#ff5a3a','#ffaa20','#30e060','#00d4ff','#4a6fff','#aa40ff','#ff40b0','#ffffff','#4a80ff'];
-const DIR_GLOWS= ['#ff5a3a','#ffaa20','#30e060','#00d4ff','#4a6fff','#aa40ff','#ff40b0','#ffffff','#4a80ff'];
-const PALETTE=['#ff5a3a','#ffaa20','#30e060','#00d4ff','#4a6fff','#aa40ff','#ff40b0','#ffffff'];
-
+const DIR_COLORS=['\u0023\u0066\u0066\u0035\u0061\u0033\u0061','\u0023\u0066\u0066\u0061\u0061\u0032\u0030','\u0023\u0033\u0030\u0065\u0030\u0036\u0030','\u0023\u0030\u0030\u0064\u0034\u0066\u0066','\u0023\u0034\u0061\u0036\u0066\u0066\u0066','\u0023\u0061\u0061\u0034\u0030\u0066\u0066','\u0023\u0066\u0066\u0034\u0030\u0062\u0030','\u0023\u0066\u0066\u0066\u0066\u0066\u0066','\u0023\u0034\u0061\u0038\u0030\u0066\u0066'];
+const DIR_GLOWS=['\u0023\u0066\u0066\u0035\u0061\u0033\u0061','\u0023\u0066\u0066\u0061\u0061\u0032\u0030','\u0023\u0033\u0030\u0065\u0030\u0036\u0030','\u0023\u0030\u0030\u0064\u0034\u0066\u0066','\u0023\u0034\u0061\u0036\u0066\u0066\u0066','\u0023\u0061\u0061\u0034\u0030\u0066\u0066','\u0023\u0066\u0066\u0034\u0030\u0062\u0030','\u0023\u0066\u0066\u0066\u0066\u0066\u0066','\u0023\u0034\u0061\u0038\u0030\u0066\u0066'];
+const PALETTE=['\u0023\u0066\u0066\u0035\u0061\u0033\u0061','\u0023\u0066\u0066\u0061\u0061\u0032\u0030','\u0023\u0033\u0030\u0065\u0030\u0036\u0030','\u0023\u0030\u0030\u0064\u0034\u0066\u0066','\u0023\u0034\u0061\u0036\u0066\u0066\u0066','\u0023\u0061\u0061\u0034\u0030\u0066\u0066','\u0023\u0066\u0066\u0034\u0030\u0062\u0030','\u0023\u0066\u0066\u0066\u0066\u0066\u0066'];
 function setMoveMode(m,btn){
-  moveMode=m;
-  document.querySelectorAll('.mmode').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  mStep=0;
-  // ランダムの先読みをリセット
-  if(m==='random') randNext=newRandPos();
+ moveMode=m;
+ document.querySelectorAll('\u002e\u006d\u006d\u006f\u0064\u0065').forEach(b=>b.classList.remove('\u0061\u0063\u0074\u0069\u0076\u0065'));
+ btn.classList.add('\u0061\u0063\u0074\u0069\u0076\u0065');
+ mStep=0;
+ if(m==='\u0072\u0061\u006e\u0064\u006f\u006d')randNext=newRandPos();
 }
-
 function newRandPos(){
-  // 画面端10%は余白、フルスクリーン想定
-  const mx=(window.innerWidth||800)*0.44,my=(window.innerHeight||600)*0.42;
-  return{x:(Math.random()*2-1)*mx,y:(Math.random()*2-1)*my};
+ const mx=(window.innerWidth||800)*0.44,my=(window.innerHeight||600)*0.42;
+ return{x:(Math.random()*2-1)*mx,y:(Math.random()*2-1)*my};
 }
-
-// モード別に(x,y)オフセット(中心からのpx)と色を返す
 function getMoveStep(step){
-  const vw=window.innerWidth||800,vh=window.innerHeight||600;
-  const rStd=Math.min(vw,vh)*0.39;
-  const rWide=Math.min(vw*0.46,vh*0.44);
-  const dS=rStd*0.707,dW=rWide*0.707;
-
-  if(moveMode==='standard'){
-    const pts=[[0,-rStd],[dS,-dS],[rStd,0],[dS,dS],[0,rStd],[-dS,dS],[-rStd,0],[-dS,-dS],[0,0]];
-    const idx=step%pts.length;
-    return{x:pts[idx][0],y:pts[idx][1],col:DIR_COLORS[idx],name:DIR_NAMES[idx],idx};
-  }
-  if(moveMode==='wide'){
-    // 8方向 + 中央を画面端ギリギリまで拡大
-    const pts=[[0,-rWide],[dW,-dW],[rWide,0],[dW,dW],[0,rWide],[-dW,dW],[-rWide,0],[-dW,-dW],[0,0]];
-    const idx=step%pts.length;
-    return{x:pts[idx][0],y:pts[idx][1],col:DIR_COLORS[idx],name:DIR_NAMES[idx]+'（ワイド）',idx};
-  }
-  if(moveMode==='random'){
-    // 現在位置は先読み済み、次の先読みを準備
-    const cur=randNext;
-    randNext=newRandPos();
-    const ci=step%PALETTE.length;
-    // 方向名を大まかに
-    const nm=cur.y<-vh*0.15?'上':cur.y>vh*0.15?'下':cur.x>vw*0.15?'右':cur.x<-vw*0.15?'左':'中央';
-    return{x:cur.x,y:cur.y,col:PALETTE[ci],name:'→'+nm,idx:ci%9};
-  }
-  if(moveMode==='lissajous'){
-    // 8の字（リサージュ 1:2）: x=A*sin(t), y=B*sin(2t)
-    const A=Math.min(vw*0.44,320),B=Math.min(vh*0.40,240);
-    const STEPS=24;
-    const t=(step%STEPS)/STEPS*2*Math.PI;
-    const x=A*Math.sin(t),y=B*Math.sin(2*t);
-    const ci=step%PALETTE.length;
-    return{x,y,col:PALETTE[ci],name:'∞ '+(step%STEPS+1)+'/'+STEPS,idx:ci%9};
-  }
-  if(moveMode==='spiral'){
-    // 渦巻き：中心から外へ広がりながら360°回転、一定周期でリセット
-    const STEPS=32;
-    const s=step%STEPS;
-    const maxR=Math.min(vw*0.44,vh*0.42);
-    const r=maxR*(s/(STEPS-1));
-    const angle=(s/STEPS)*2*Math.PI*3; // 3周分
-    const x=r*Math.cos(angle),y=r*Math.sin(angle);
-    const ci=step%PALETTE.length;
-    if(s===0&&step>0)speak('もう一周！');
-    return{x,y,col:PALETTE[ci],name:'🌀 '+(s+1)+'/'+STEPS,idx:ci%9};
-  }
-  if(moveMode==='room'){
-    // 部屋ARモード：画面端90%まで使う（カメラFOV≒80°→端まで≒40°の目の動き）
-    // 8方向を画面端ギリギリに配置 + 中央
-    const mx=vw*0.44, my=vh*0.42;
-    const pts=[
-      [0,-my],[mx*0.75,-my*0.75],[mx,0],[mx*0.75,my*0.75],
-      [0,my],[-mx*0.75,my*0.75],[-mx,0],[-mx*0.75,-my*0.75],[0,0]
-    ];
-    const idx=step%pts.length;
-    const [x,y]=pts[idx];
-    const col=DIR_COLORS[idx];
-    return{x,y,col,name:DIR_NAMES[idx],idx};
-  }
-  return{x:0,y:0,col:'#4a80ff',name:'中央',idx:8};
+ const vw=window.innerWidth||800,vh=window.innerHeight||600;
+ const rStd=Math.min(vw,vh)*0.39;
+ const rWide=Math.min(vw*0.46,vh*0.44);
+ const dS=rStd*0.707,dW=rWide*0.707;
+ if(moveMode==='\u0073\u0074\u0061\u006e\u0064\u0061\u0072\u0064'){
+ const pts=[[0,-rStd],[dS,-dS],[rStd,0],[dS,dS],[0,rStd],[-dS,dS],[-rStd,0],[-dS,-dS],[0,0]];
+ const idx=step%pts.length;
+ return{x:pts[idx][0],y:pts[idx][1],col:DIR_COLORS[idx],name:DIR_NAMES[idx],idx};
 }
-
+ if(moveMode==='\u0077\u0069\u0064\u0065'){
+ const pts=[[0,-rWide],[dW,-dW],[rWide,0],[dW,dW],[0,rWide],[-dW,dW],[-rWide,0],[-dW,-dW],[0,0]];
+ const idx=step%pts.length;
+ return{x:pts[idx][0],y:pts[idx][1],col:DIR_COLORS[idx],name:DIR_NAMES[idx]+'（ワイド）',idx};
+}
+ if(moveMode==='\u0072\u0061\u006e\u0064\u006f\u006d'){
+ const cur=randNext;
+ randNext=newRandPos();
+ const ci=step%PALETTE.length;
+ const nm=cur.y<-vh*0.15?'上':cur.y>vh*0.15?'下':cur.x>vw*0.15?'右':cur.x<-vw*0.15?'左':'中央';
+ return{x:cur.x,y:cur.y,col:PALETTE[ci],name:'→'+nm,idx:ci%9};
+}
+ if(moveMode==='\u006c\u0069\u0073\u0073\u0061\u006a\u006f\u0075\u0073'){
+ const A=Math.min(vw*0.44,320),B=Math.min(vh*0.40,240);
+ const STEPS=24;
+ const t=(step%STEPS)/STEPS*2*Math.PI;
+ const x=A*Math.sin(t),y=B*Math.sin(2*t);
+ const ci=step%PALETTE.length;
+ return{x,y,col:PALETTE[ci],name:'∞ '+(step%STEPS+1)+'/'+STEPS,idx:ci%9};
+}
+ if(moveMode==='\u0073\u0070\u0069\u0072\u0061\u006c'){
+ const STEPS=32;
+ const s=step%STEPS;
+ const maxR=Math.min(vw*0.44,vh*0.42);
+ const r=maxR*(s/(STEPS-1));
+ const angle=(s/STEPS)*2*Math.PI*3;
+ const x=r*Math.cos(angle),y=r*Math.sin(angle);
+ const ci=step%PALETTE.length;
+ if(s===0&&step>0)speak('もう一周！');
+ return{x,y,col:PALETTE[ci],name:'🌀 '+(s+1)+'/'+STEPS,idx:ci%9};
+}
+ if(moveMode==='\u0072\u006f\u006f\u006d'){
+ const mx=vw*0.44,my=vh*0.42;
+ const pts=[
+[0,-my],[mx*0.75,-my*0.75],[mx,0],[mx*0.75,my*0.75],
+[0,my],[-mx*0.75,my*0.75],[-mx,0],[-mx*0.75,-my*0.75],[0,0]
+];
+ const idx=step%pts.length;
+ const[x,y]=pts[idx];
+ const col=DIR_COLORS[idx];
+ return{x,y,col,name:DIR_NAMES[idx],idx};
+}
+ return{x:0,y:0,col:'\u0023\u0034\u0061\u0038\u0030\u0066\u0066',name:'中央',idx:8};
+}
 function getIntervalMs(){
-  if(moveMode==='lissajous')return 1100;
-  if(moveMode==='spiral')return 1000;
-  if(moveMode==='random')return 1600;
-  if(moveMode==='wide')return 1700;
-  if(moveMode==='room')return 1800;
-  return 1500;
+ if(moveMode==='\u006c\u0069\u0073\u0073\u0061\u006a\u006f\u0075\u0073')return 1100;
+ if(moveMode==='\u0073\u0070\u0069\u0072\u0061\u006c')return 1000;
+ if(moveMode==='\u0072\u0061\u006e\u0064\u006f\u006d')return 1600;
+ if(moveMode==='\u0077\u0069\u0064\u0065')return 1700;
+ if(moveMode==='\u0072\u006f\u006f\u006d')return 1800;
+ return 1500;
 }
-
 function toggleMove(){mRun?exitMove():enterMove();}
-
 let roomStream=null;
 async function startRoomCamera(){
-  try{
-    // フロントカメラ（自撮り側）
-    roomStream=await navigator.mediaDevices.getUserMedia(
-      {video:{facingMode:'user',width:{ideal:1280},height:{ideal:720}}});
-    const v=document.getElementById('room-video');
-    v.srcObject=roomStream;
-    v.style.display='block';
-    document.getElementById('room-overlay').style.display='block';
-    // フルスクリーンの背景を透明に
-    document.getElementById('move-fs').style.background='transparent';
-  }catch(e){
-    showToast('⚠️ カメラを開けませんでした');
-    moveMode='standard';
-  }
+ try{
+ roomStream=await navigator.mediaDevices.getUserMedia(
+{video:{facingMode:'\u0075\u0073\u0065\u0072',width:{ideal:1280},height:{ideal:720}}});
+ const v=document.getElementById('\u0072\u006f\u006f\u006d\u002d\u0076\u0069\u0064\u0065\u006f');
+ v.srcObject=roomStream;
+ v.style.display='\u0062\u006c\u006f\u0063\u006b';
+ document.getElementById('\u0072\u006f\u006f\u006d\u002d\u006f\u0076\u0065\u0072\u006c\u0061\u0079').style.display='\u0062\u006c\u006f\u0063\u006b';
+ document.getElementById('\u006d\u006f\u0076\u0065\u002d\u0066\u0073').style.background='\u0074\u0072\u0061\u006e\u0073\u0070\u0061\u0072\u0065\u006e\u0074';
+}catch(e){
+ showToast('⚠️ カメラを開けませんでした');
+ moveMode='\u0073\u0074\u0061\u006e\u0064\u0061\u0072\u0064';
+}
 }
 function stopRoomCamera(){
-  if(roomStream){roomStream.getTracks().forEach(t=>t.stop());roomStream=null;}
-  const v=document.getElementById('room-video');
-  v.style.display='none';v.srcObject=null;
-  document.getElementById('room-overlay').style.display='none';
-  document.getElementById('move-fs').style.background='';
+ if(roomStream){roomStream.getTracks().forEach(t=>t.stop());roomStream=null;}
+ const v=document.getElementById('\u0072\u006f\u006f\u006d\u002d\u0076\u0069\u0064\u0065\u006f');
+ v.style.display='\u006e\u006f\u006e\u0065';v.srcObject=null;
+ document.getElementById('\u0072\u006f\u006f\u006d\u002d\u006f\u0076\u0065\u0072\u006c\u0061\u0079').style.display='\u006e\u006f\u006e\u0065';
+ document.getElementById('\u006d\u006f\u0076\u0065\u002d\u0066\u0073').style.background='';
 }
-
 async function enterMove(){
-  mRun=true;mStep=0;
-  if(moveMode==='random')randNext=newRandPos();
-  document.getElementById('moveBtn').textContent='停止（ESCでも終了）';
-  const el=document.getElementById('move-fs');
-  el.style.display='flex';
-  el.requestFullscreen&&el.requestFullscreen();
-  if(moveMode==='room') await startRoomCamera();
-  startMoveTimer();
-  runMove();mInt=setInterval(runMove,getIntervalMs());
+ mRun=true;mStep=0;
+ if(moveMode==='\u0072\u0061\u006e\u0064\u006f\u006d')randNext=newRandPos();
+ document.getElementById('\u006d\u006f\u0076\u0065\u0042\u0074\u006e').textContent='\u505c\u6b62\uff08\u0045\u0053\u0043\u3067\u3082\u7d42\u4e86\uff09';
+ const el=document.getElementById('\u006d\u006f\u0076\u0065\u002d\u0066\u0073');
+ el.style.display='\u0066\u006c\u0065\u0078';
+ el.requestFullscreen&&el.requestFullscreen();
+ if(moveMode==='\u0072\u006f\u006f\u006d')await startRoomCamera();
+ startMoveTimer();
+ runMove();mInt=setInterval(runMove,getIntervalMs());
 }
 function exitMove(){
-  clearInterval(mInt);clearInterval(mTimerInt);mRun=false;mStep=0;
-  stopRoomCamera();
-  document.exitFullscreen&&document.exitFullscreen();
-  document.getElementById('move-fs').style.display='none';
-  document.getElementById('moveBtn').textContent='スタート（全画面）';
-  document.getElementById('moveLabel').textContent='点を目で追いましょう';
-  document.getElementById('pupil').style.transform='translate(0,0)';
-  document.getElementById('gaze-cursor').style.display='none';
-  document.getElementById('acc-badge').style.display='none';
-  clearTimeout(sampleTmr);
-  showSessionResult();
-  dirHits=new Array(9).fill(0);dirTotal=new Array(9).fill(0);
+ clearInterval(mInt);clearInterval(mTimerInt);mRun=false;mStep=0;
+ stopRoomCamera();
+ document.exitFullscreen&&document.exitFullscreen();
+ document.getElementById('\u006d\u006f\u0076\u0065\u002d\u0066\u0073').style.display='\u006e\u006f\u006e\u0065';
+ document.getElementById('\u006d\u006f\u0076\u0065\u0042\u0074\u006e').textContent='スタート（全画面）';
+ document.getElementById('\u006d\u006f\u0076\u0065\u004c\u0061\u0062\u0065\u006c').textContent='点を目で追いましょう';
+ document.getElementById('\u0070\u0075\u0070\u0069\u006c').style.transform='\u0074\u0072\u0061\u006e\u0073\u006c\u0061\u0074\u0065\u0028\u0030\u002c\u0030\u0029';
+ document.getElementById('\u0067\u0061\u007a\u0065\u002d\u0063\u0075\u0072\u0073\u006f\u0072').style.display='\u006e\u006f\u006e\u0065';
+ document.getElementById('\u0061\u0063\u0063\u002d\u0062\u0061\u0064\u0067\u0065').style.display='\u006e\u006f\u006e\u0065';
+ clearTimeout(sampleTmr);
+ showSessionResult();
+ dirHits=new Array(9).fill(0);dirTotal=new Array(9).fill(0);
 }
-document.addEventListener('fullscreenchange',()=>{
-  if(!document.fullscreenElement&&mRun)exitMove();
+document.addEventListener('\u0066\u0075\u006c\u006c\u0073\u0063\u0072\u0065\u0065\u006e\u0063\u0068\u0061\u006e\u0067\u0065',()=>{
+ if(!document.fullscreenElement&&mRun)exitMove();
 });
-
 function runMove(){
-  const {x,y,col,name,idx}=getMoveStep(mStep);
-
-  // 通常ビュー（小 — スケールダウン）
-  const sc=0.38;
-  const pu=document.getElementById('pupil');
-  pu.style.transform=`translate(${x*sc}px,${y*sc}px)`;
-  pu.style.background=col;
-  pu.style.boxShadow=`0 0 12px ${col}`;
-
-  // フルスクリーン（実座標）
-  const fp=document.getElementById('fs-pupil');
-  fp.style.transform=`translate(${x}px,${y}px)`;
-  // 部屋ARモードは背景が明るいので点を大きく・縁取りつきにする
-  if(moveMode==='room'){
-    fp.style.width=fp.style.height='42px';
-    fp.style.background=`radial-gradient(circle at 35% 35%,#fff,${col})`;
-    fp.style.boxShadow=`0 0 0 3px ${col},0 0 24px ${col},0 0 60px ${col}88`;
-    fp.style.borderRadius='50%';
-  } else {
-    fp.style.width=fp.style.height='26px';
-    fp.style.background=`radial-gradient(circle at 35% 35%,${col},${col}88)`;
-    fp.style.boxShadow=`0 0 28px ${col},0 0 70px ${col}66`;
-  }
-  fp.style.color=col;
-
-  document.getElementById('fs-label').textContent=name;
-  document.getElementById('moveLabel').textContent=name;
-
-  // 音（ランダム/リサージュ/螺旋は方向から判定）
-  if(Math.abs(x)<60&&Math.abs(y)<60)swoosh('center');
-  else if(y<-80)swoosh('up');
-  else if(y>80)swoosh('down');
-  else swoosh(x>0?'up':'down');
-
-  // 視線サンプリング
-  if(gazeOK){
-    const tx=window.innerWidth/2+x,ty=window.innerHeight/2+y;
-    startSampling(idx,tx,ty);
-  }
-
-  mStep++;
-  const cycleLen=(moveMode==='standard'||moveMode==='wide')?9:(moveMode==='lissajous')?24:32;
-  if(mStep>0&&mStep%cycleLen===0){
-    mSet++;addLog(`眼球運動 ${mSet}セット完了（${moveMode}）`);speak('まばたきして休んで');
-  }
+ const{x,y,col,name,idx}=getMoveStep(mStep);
+ const sc=0.38;
+ const pu=document.getElementById('\u0070\u0075\u0070\u0069\u006c');
+ pu.style.transform=`translate(${x*sc}px,${y*sc}px)`;
+ pu.style.background=col;
+ pu.style.boxShadow=`0 0 12px ${col}`;
+ const fp=document.getElementById('\u0066\u0073\u002d\u0070\u0075\u0070\u0069\u006c');
+ fp.style.transform=`translate(${x}px,${y}px)`;
+ if(moveMode==='\u0072\u006f\u006f\u006d'){
+ fp.style.width=fp.style.height='\u0034\u0032\u0070\u0078';
+ fp.style.background=`radial-gradient(circle at 35% 35%,#fff,${col})`;
+ fp.style.boxShadow=`0 0 0 3px ${col},0 0 24px ${col},0 0 60px ${col}88`;
+ fp.style.borderRadius='50%';
+}else{
+ fp.style.width=fp.style.height='\u0032\u0036\u0070\u0078';
+ fp.style.background=`radial-gradient(circle at 35% 35%,${col},${col}88)`;
+ fp.style.boxShadow=`0 0 28px ${col},0 0 70px ${col}66`;
 }
-
-// ======================================================
-// WebGazer 視線追跡
-// ======================================================
+ fp.style.color=col;
+ document.getElementById('\u0066\u0073\u002d\u006c\u0061\u0062\u0065\u006c').textContent=name;
+ document.getElementById('\u006d\u006f\u0076\u0065\u004c\u0061\u0062\u0065\u006c').textContent=name;
+ if(Math.abs(x)<60&&Math.abs(y)<60)swoosh('\u0063\u0065\u006e\u0074\u0065\u0072');
+ else if(y<-80)swoosh('up');
+ else if(y>80)swoosh('\u0064\u006f\u0077\u006e');
+ else swoosh(x>0?'up':'\u0064\u006f\u0077\u006e');
+ if(gazeOK){
+ const tx=window.innerWidth/2+x,ty=window.innerHeight/2+y;
+ startSampling(idx,tx,ty);
+}
+ mStep++;
+ const cycleLen=(moveMode==='\u0073\u0074\u0061\u006e\u0064\u0061\u0072\u0064'||moveMode==='\u0077\u0069\u0064\u0065')?9:(moveMode==='\u006c\u0069\u0073\u0073\u0061\u006a\u006f\u0075\u0073')?24:32;
+ if(mStep>0&&mStep%cycleLen===0){
+ mSet++;addLog(`眼球運動 ${mSet}セット完了（${moveMode}）`);speak('まばたきして休んで');
+}
+}
 let gazeOK=false,gazeEnabled=false,gazeX=0,gazeY=0;
 let calDots=[],calIdx=0,calClicks=[];
 const CAL_NEED=5;
@@ -1149,147 +1026,137 @@ const CAL_POS=[[10,10],[50,10],[90,10],[10,50],[50,50],[90,50],[10,90],[50,90],[
 let dirHits=new Array(9).fill(0),dirTotal=new Array(9).fill(0);
 let sampleTmr=null;
 const HIT_PX=180,S_INT=350,S_COUNT=3;
-
 async function startCal(){
-  if(typeof webgazer==='undefined'){showToast('⚠️ WebGazer読み込み中…');return;}
-  if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;camEnabled=false;
-    document.getElementById('cam-pip').style.display='none';}
-  try{
-    webgazer.clearData();
-    await webgazer.setGazeListener(onGaze)
-      .showVideoPreview(false).showPredictionPoints(false)
-      .showFaceOverlay(false).showFaceFeedbackBox(false).begin();
-    gazeEnabled=true;
-  }catch(e){showToast('⚠️ カメラ取得失敗: '+e.message);return;}
-  calClicks=new Array(9).fill(0);calIdx=0;
-  const ov=document.getElementById('cal-overlay');ov.style.display='flex';
-  calDots.forEach(d=>d.remove());calDots=[];
-  CAL_POS.forEach(([px,py],i)=>{
-    const d=document.createElement('div');
-    d.className='cdot '+(i===0?'active':'wait');
-    d.style.left=px+'%';d.style.top=py+'%';d.textContent='0';
-    d.addEventListener('click',()=>onCalClick(i));
-    ov.appendChild(d);calDots.push(d);
-  });
-  updateCalProg();
+ if(typeof webgazer==='\u0075\u006e\u0064\u0065\u0066\u0069\u006e\u0065\u0064'){showToast('\u26a0\ufe0f\u0020\u0057\u0065\u0062\u0047\u0061\u007a\u0065\u0072\u8aad\u307f\u8fbc\u307f\u4e2d\u2026');return;}
+ if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;camEnabled=false;
+ document.getElementById('\u0063\u0061\u006d\u002d\u0070\u0069\u0070').style.display='\u006e\u006f\u006e\u0065';}
+ try{
+ webgazer.clearData();
+ await webgazer.setGazeListener(onGaze)
+ .showVideoPreview(false).showPredictionPoints(false)
+ .showFaceOverlay(false).showFaceFeedbackBox(false).begin();
+ gazeEnabled=true;
+}catch(e){showToast('⚠️ カメラ取得失敗:'+e.message);return;}
+ calClicks=new Array(9).fill(0);calIdx=0;
+ const ov=document.getElementById('\u0063\u0061\u006c\u002d\u006f\u0076\u0065\u0072\u006c\u0061\u0079');ov.style.display='\u0066\u006c\u0065\u0078';
+ calDots.forEach(d=>d.remove());calDots=[];
+ CAL_POS.forEach(([px,py],i)=>{
+ const d=document.createElement('div');
+ d.className='\u0063\u0064\u006f\u0074\u0020'+(i===0?'\u0061\u0063\u0074\u0069\u0076\u0065':'\u0077\u0061\u0069\u0074');
+ d.style.left=px+'%';d.style.top=py+'%';d.textContent='0';
+ d.addEventListener('\u0063\u006c\u0069\u0063\u006b',()=>onCalClick(i));
+ ov.appendChild(d);calDots.push(d);
+});
+ updateCalProg();
 }
 function onCalClick(i){
-  if(i!==calIdx)return;
-  calClicks[i]++;
-  calDots[i].textContent=calClicks[i];
-  calDots[i].style.transform=`translate(-50%,-50%) scale(${1-calClicks[i]*0.07})`;
-  if(calClicks[i]>=CAL_NEED){
-    calDots[i].className='cdot done';calDots[i].textContent='✓';
-    calIdx++;
-    if(calIdx>=9){finishCal();}
-    else{calDots[calIdx].className='cdot active';updateCalProg();}
-  } else updateCalProg();
+ if(i!==calIdx)return;
+ calClicks[i]++;
+ calDots[i].textContent=calClicks[i];
+ calDots[i].style.transform=`translate(-50%,-50%)scale(${1-calClicks[i]*0.07})`;
+ if(calClicks[i]>=CAL_NEED){
+ calDots[i].className='\u0063\u0064\u006f\u0074\u0020\u0064\u006f\u006e\u0065';calDots[i].textContent='✓';
+ calIdx++;
+ if(calIdx>=9){finishCal();}
+ else{calDots[calIdx].className='\u0063\u0064\u006f\u0074\u0020\u0061\u0063\u0074\u0069\u0076\u0065';updateCalProg();}
+}else updateCalProg();
 }
 function updateCalProg(){
-  document.getElementById('cal-prog').textContent=
-    `点 ${calIdx+1}/9 — あと${CAL_NEED-calClicks[calIdx]}回クリック`;}
+ document.getElementById('\u0063\u0061\u006c\u002d\u0070\u0072\u006f\u0067').textContent=
+ `点 ${calIdx+1}/9 — あと${CAL_NEED-calClicks[calIdx]}回クリック`;}
 function finishCal(){
-  document.getElementById('cal-overlay').style.display='none';
-  gazeOK=true;
-  document.getElementById('gazeSt').textContent='✅ キャリブレーション済み — 視線追跡ON';
-  document.getElementById('gazeSt').style.color='#4aff80';
-  showToast('✅ キャリブレーション完了！');
-  speak('キャリブレーション完了です。');
+ document.getElementById('\u0063\u0061\u006c\u002d\u006f\u0076\u0065\u0072\u006c\u0061\u0079').style.display='\u006e\u006f\u006e\u0065';
+ gazeOK=true;
+ document.getElementById('\u0067\u0061\u007a\u0065\u0053\u0074').textContent='\u2705\u0020\u30ad\u30e3\u30ea\u30d6\u30ec\u30fc\u30b7\u30e7\u30f3\u6e08\u307f\u0020\u2014\u0020\u8996\u7dda\u8ffd\u8de1\u004f\u004e';
+ document.getElementById('\u0067\u0061\u007a\u0065\u0053\u0074').style.color='\u0023\u0034\u0061\u0066\u0066\u0038\u0030';
+ showToast('✅ キャリブレーション完了！');
+ speak('キャリブレーション完了です。');
 }
 function abortCal(){
-  document.getElementById('cal-overlay').style.display='none';
-  if(gazeEnabled&&!gazeOK)webgazer.pause();
+ document.getElementById('\u0063\u0061\u006c\u002d\u006f\u0076\u0065\u0072\u006c\u0061\u0079').style.display='\u006e\u006f\u006e\u0065';
+ if(gazeEnabled&&!gazeOK)webgazer.pause();
 }
 function onGaze(data){
-  if(!data)return;
-  gazeX=data.x;gazeY=data.y;
-  const cur=document.getElementById('gaze-cursor');
-  if(mRun&&gazeOK){cur.style.display='block';cur.style.left=gazeX+'px';cur.style.top=gazeY+'px';}
-  else cur.style.display='none';
+ if(!data)return;
+ gazeX=data.x;gazeY=data.y;
+ const cur=document.getElementById('\u0067\u0061\u007a\u0065\u002d\u0063\u0075\u0072\u0073\u006f\u0072');
+ if(mRun&&gazeOK){cur.style.display='\u0062\u006c\u006f\u0063\u006b';cur.style.left=gazeX+'px';cur.style.top=gazeY+'px';}
+ else cur.style.display='\u006e\u006f\u006e\u0065';
 }
 function startSampling(di,tx,ty){
-  clearTimeout(sampleTmr);
-  let c=0;
-  function s(){
-    const dist=Math.hypot(gazeX-tx,gazeY-ty);
-    dirTotal[di]++;if(dist<HIT_PX)dirHits[di]++;
-    updateGazeUI();c++;
-    if(c<S_COUNT)sampleTmr=setTimeout(s,S_INT);
-  }
-  sampleTmr=setTimeout(s,500);
+ clearTimeout(sampleTmr);
+ let c=0;
+ function s(){
+ const dist=Math.hypot(gazeX-tx,gazeY-ty);
+ dirTotal[di]++;if(dist<HIT_PX)dirHits[di]++;
+ updateGazeUI();c++;
+ if(c<S_COUNT)sampleTmr=setTimeout(s,S_INT);
+}
+ sampleTmr=setTimeout(s,500);
 }
 function updateGazeUI(){
-  const th=dirHits.reduce((a,b)=>a+b,0);
-  const tt=dirTotal.reduce((a,b)=>a+b,0);
-  if(!tt)return;
-  const pct=Math.round(th/tt*100);
-  const grade=pct>=80?'S':pct>=60?'A':pct>=40?'B':pct>=20?'C':'D';
-  const gc=pct>=80?'#ffd700':pct>=60?'#4aff80':pct>=40?'#4a80ff':pct>=20?'#ffa040':'#ff4060';
-  document.getElementById('acc-val').textContent=grade;
-  document.getElementById('acc-val').style.color=gc;
-  document.getElementById('acc-badge').style.display=mRun?'block':'none';
-  const fa=document.getElementById('fs-acc');
-  if(fa){fa.style.display='block';fa.innerHTML=`視線 <b style="color:${gc}">${grade}（${pct}%）</b>`;}
+ const th=dirHits.reduce((a,b)=>a+b,0);
+ const tt=dirTotal.reduce((a,b)=>a+b,0);
+ if(!tt)return;
+ const pct=Math.round(th/tt*100);
+ const grade=pct>=80?'S':pct>=60?'A':pct>=40?'B':pct>=20?'C':'D';
+ const gc=pct>=80?'\u0023\u0066\u0066\u0064\u0037\u0030\u0030':pct>=60?'\u0023\u0034\u0061\u0066\u0066\u0038\u0030':pct>=40?'\u0023\u0034\u0061\u0038\u0030\u0066\u0066':pct>=20?'\u0023\u0066\u0066\u0061\u0030\u0034\u0030':'\u0023\u0066\u0066\u0034\u0030\u0036\u0030';
+ document.getElementById('\u0061\u0063\u0063\u002d\u0076\u0061\u006c').textContent=grade;
+ document.getElementById('\u0061\u0063\u0063\u002d\u0076\u0061\u006c').style.color=gc;
+ document.getElementById('\u0061\u0063\u0063\u002d\u0062\u0061\u0064\u0067\u0065').style.display=mRun?'\u0062\u006c\u006f\u0063\u006b':'\u006e\u006f\u006e\u0065';
+ const fa=document.getElementById('\u0066\u0073\u002d\u0061\u0063\u0063');
+ if(fa){fa.style.display='\u0062\u006c\u006f\u0063\u006b';fa.innerHTML=`視線<b style="color:${gc}">${grade}（${pct}%）</b>`;}
 }
-
-// ======================================================
-// セッション結果（レーダーチャート）
-// ======================================================
 function showSessionResult(){
-  const th=dirHits.reduce((a,b)=>a+b,0);
-  const tt=dirTotal.reduce((a,b)=>a+b,0);
-  if(!tt)return;
-  const pct=Math.round(th/tt*100);
-  const grade=pct>=80?'S':pct>=60?'A':pct>=40?'B':pct>=20?'C':'D';
-  const icon=grade==='S'?'🏆':grade==='A'?'⭐':grade==='B'?'👍':grade==='C'?'💪':'🔄';
-  const gc=pct>=80?'#ffd700':pct>=60?'#4aff80':pct>=40?'#4a80ff':pct>=20?'#ffa040':'#ff4060';
-  const msg=pct>=80?'ほぼ完璧に追えています':pct>=60?'上手く追えています':pct>=40?'まあまあ追えています':pct>=20?'もう少し練習しましょう':'キャリブレーションをやり直してみて';
-
-  // レーダーSVG
-  const cx=100,cy=100,r=68;
-  const angles=[-90,-45,0,45,90,135,180,-135];
-  const pts=angles.map((a,i)=>{
-    const s=dirTotal[i]>0?dirHits[i]/dirTotal[i]:0;
-    const rad=a*Math.PI/180;
-    return[cx+r*s*Math.cos(rad),cy+r*s*Math.sin(rad)];
-  });
-  const poly=pts.map(p=>p.join(',')).join(' ');
-  const guides=[.25,.5,.75,1].map(f=>`<circle cx="${cx}" cy="${cy}" r="${r*f}" fill="none" stroke="#141428" stroke-width="1"/>`).join('');
-  const axes=angles.map(a=>{const rad=a*Math.PI/180;return`<line x1="${cx}" y1="${cy}" x2="${cx+r*Math.cos(rad)}" y2="${cy+r*Math.sin(rad)}" stroke="#141428" stroke-width="1"/>`;}).join('');
-  const lbls=angles.map((a,i)=>{
-    const rad=a*Math.PI/180;
-    const d=dirTotal[i]>0?Math.round(dirHits[i]/dirTotal[i]*100):0;
-    const c=d>=60?'#4aff80':d>=30?'#4a80ff':'#ff5040';
-    return`<text x="${cx+(r+17)*Math.cos(rad)}" y="${cy+(r+17)*Math.sin(rad)}" text-anchor="middle" dominant-baseline="middle" fill="${c}" font-size="9">${DIR_NAMES[i]}</text>`;
-  }).join('');
-  const radar=`<svg width="200" height="200" viewBox="0 0 200 200" style="display:block;margin:0 auto">${guides}${axes}<polygon points="${poly}" fill="rgba(74,128,255,0.18)" stroke="#4a80ff" stroke-width="1.5"/>${pts.map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="3" fill="#4aff80"/>`).join('')}${lbls}</svg>`;
-
-  // 方向別バー
-  const bars=DIR_NAMES.slice(0,8).map((name,i)=>{
-    const d=dirTotal[i]>0?Math.round(dirHits[i]/dirTotal[i]*100):0;
-    const filled=Math.round(d/20);
-    const c=d>=60?'#4aff80':d>=30?'#4a80ff':'#ff5040';
-    return`<div style="font-size:0.7rem;font-family:monospace;line-height:1.9;color:#3a4060">
-      <span style="display:inline-block;width:2.2em;color:#4a5070">${name}</span>
-      <span style="color:${c}">${'█'.repeat(filled)}${'░'.repeat(5-filled)} ${d}%</span>
-    </div>`;
-  }).join('');
-
-  document.getElementById('rm-inner').innerHTML=`
-    <div style="font-size:2.6rem;margin-bottom:4px">${icon}</div>
-    <div style="font-size:1.9rem;font-weight:700;color:${gc};margin-bottom:2px">グレード ${grade}</div>
-    <div style="font-size:0.8rem;color:#3a4870;margin-bottom:18px">${msg}（${pct}%）</div>
-    ${radar}
-    <div style="font-size:0.68rem;color:#2a3050;margin-top:6px;margin-bottom:14px">レーダー = 方向別精度。外側ほど正確に追えています</div>
-    <div style="background:#080814;border-radius:10px;padding:12px;text-align:left">${bars}</div>
-    <button onclick="document.getElementById('result-modal').style.display='none'"
-      style="margin-top:18px;background:linear-gradient(135deg,#4a80ff,#7a4aff);color:#fff;
-      padding:11px 30px;border-radius:50px;border:none;font-size:0.9rem;font-weight:600;cursor:pointer">
-      閉じる
-    </button>`;
-  document.getElementById('result-modal').style.display='flex';
-  addLog(`眼球運動終了 グレード:${grade}（${pct}%）`);
-  speak(`グレード${grade}！${msg}`);
+ const th=dirHits.reduce((a,b)=>a+b,0);
+ const tt=dirTotal.reduce((a,b)=>a+b,0);
+ if(!tt)return;
+ const pct=Math.round(th/tt*100);
+ const grade=pct>=80?'S':pct>=60?'A':pct>=40?'B':pct>=20?'C':'D';
+ const icon=grade==='S'?'🏆':grade==='A'?'⭐':grade==='B'?'👍':grade==='C'?'💪':'🔄';
+ const gc=pct>=80?'\u0023\u0066\u0066\u0064\u0037\u0030\u0030':pct>=60?'\u0023\u0034\u0061\u0066\u0066\u0038\u0030':pct>=40?'\u0023\u0034\u0061\u0038\u0030\u0066\u0066':pct>=20?'\u0023\u0066\u0066\u0061\u0030\u0034\u0030':'\u0023\u0066\u0066\u0034\u0030\u0036\u0030';
+ const msg=pct>=80?'ほぼ完璧に追えています':pct>=60?'上手く追えています':pct>=40?'まあまあ追えています':pct>=20?'もう少し練習しましょう':'キャリブレーションをやり直してみて';
+ const cx=100,cy=100,r=68;
+ const angles=[-90,-45,0,45,90,135,180,-135];
+ const pts=angles.map((a,i)=>{
+ const s=dirTotal[i]>0?dirHits[i]/dirTotal[i]:0;
+ const rad=a*Math.PI/180;
+ return[cx+r*s*Math.cos(rad),cy+r*s*Math.sin(rad)];
+});
+ const poly=pts.map(p=>p.join(',')).join(' ');
+ const guides=[.25,.5,.75,1].map(f=>`<circle cx="${cx}" cy="${cy}" r="${r*f}" fill="none" stroke="#141428" stroke-width="1"/>`).join('');
+ const axes=angles.map(a=>{const rad=a*Math.PI/180;return`<line x1="${cx}" y1="${cy}" x2="${cx+r*Math.cos(rad)}" y2="${cy+r*Math.sin(rad)}" stroke="#141428" stroke-width="1"/>`;}).join('');
+ const lbls=angles.map((a,i)=>{
+ const rad=a*Math.PI/180;
+ const d=dirTotal[i]>0?Math.round(dirHits[i]/dirTotal[i]*100):0;
+ const c=d>=60?'\u0023\u0034\u0061\u0066\u0066\u0038\u0030':d>=30?'\u0023\u0034\u0061\u0038\u0030\u0066\u0066':'\u0023\u0066\u0066\u0035\u0030\u0034\u0030';
+ return`<text x="${cx+(r+17)*Math.cos(rad)}" y="${cy+(r+17)*Math.sin(rad)}" text-anchor="middle" dominant-baseline="middle" fill="${c}" font-size="9">${DIR_NAMES[i]}</text>`;
+}).join('');
+ const radar=`<svg width="200" height="200" viewBox="0 0 200 200" style="display:block;margin:0 auto">${guides}${axes}<polygon points="${poly}" fill="rgba(74,128,255,0.18)" stroke="#4a80ff" stroke-width="1.5"/>${pts.map(p=>`<circle cx="\u0024\u007b\u0070\u005b\u0030\u005d\u007d" cy="\u0024\u007b\u0070\u005b\u0031\u005d\u007d" r="3" fill="\u0023\u0034\u0061\u0066\u0066\u0038\u0030"/>`).join('')}${lbls}</svg>`;
+ const bars=DIR_NAMES.slice(0,8).map((name,i)=>{
+ const d=dirTotal[i]>0?Math.round(dirHits[i]/dirTotal[i]*100):0;
+ const filled=Math.round(d/20);
+ const c=d>=60?'\u0023\u0034\u0061\u0066\u0066\u0038\u0030':d>=30?'\u0023\u0034\u0061\u0038\u0030\u0066\u0066':'\u0023\u0066\u0066\u0035\u0030\u0034\u0030';
+ return`<div style="font-size:0.7rem;font-family:monospace;line-height:1.9;color:#3a4060">
+<span style="display:inline-block;width:2.2em;color:#4a5070">${name}</span>
+<span style="color:${c}">${'█'.repeat(filled)}${'░'.repeat(5-filled)}${d}%</span>
+</div>`;
+}).join('');
+ document.getElementById('\u0072\u006d\u002d\u0069\u006e\u006e\u0065\u0072').innerHTML=`
+<div style="font-size:2.6rem;margin-bottom:4px">${icon}</div>
+<div style="font-size:1.9rem;font-weight:700;color:${gc};margin-bottom:2px">グレード ${grade}</div>
+<div style="font-size:0.8rem;color:#3a4870;margin-bottom:18px">${msg}（${pct}%）</div>
+ ${radar}
+<div style="font-size:0.68rem;color:#2a3050;margin-top:6px;margin-bottom:14px">レーダー=方向別精度。外側ほど正確に追えています</div>
+<div style="background:#080814;border-radius:10px;padding:12px;text-align:left">${bars}</div>
+<button onclick="document.getElementById('result-modal').style.display='none'"
+ style="margin-top:18px;background:linear-gradient(135deg,#4a80ff,#7a4aff);color:#fff;
+ padding:11px 30px;border-radius:50px;border:none;font-size:0.9rem;font-weight:600;cursor:pointer">
+ 閉じる
+</button>`;
+ document.getElementById('\u0072\u0065\u0073\u0075\u006c\u0074\u002d\u006d\u006f\u0064\u0061\u006c').style.display='\u0066\u006c\u0065\u0078';
+ addLog(`眼球運動終了 グレード:${grade}（${pct}%）`);
+ speak(`グレード${grade}！${msg}`);
 }
 </script>
 </body>
